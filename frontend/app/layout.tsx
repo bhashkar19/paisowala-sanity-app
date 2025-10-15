@@ -21,11 +21,18 @@ import {handleError} from './client-utils'
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const {data: settings} = await sanityFetch({
-    query: settingsQuery,
-    // Metadata should never contain stega
-    stega: false,
-  })
+  let settings = null
+  try {
+    const result = await sanityFetch({
+      query: settingsQuery,
+      // Metadata should never contain stega
+      stega: false,
+    })
+    settings = result.data
+  } catch (error) {
+    console.error('Failed to fetch settings for metadata:', error)
+  }
+
   const title = settings?.title || demo.title
   const description = settings?.description || demo.description
 
